@@ -1,0 +1,62 @@
+<div class="page-header">
+  <h1>{{ editando ? 'Editar Turno' : 'Nuevo Turno' }}</h1>
+  <p>{{ editando ? 'Modificá los datos del turno' : 'Completa los datos para reservar un turno' }}</p>
+</div>
+
+@if (mensaje) {
+  <div class="alert alert-success">
+    <span>&#10003;</span> {{ mensaje }}
+  </div>
+}
+
+@if (error) {
+  <div class="alert alert-error">
+    <span>&#9888;</span> {{ error }}
+  </div>
+}
+
+<form class="form-card" (ngSubmit)="guardar()" #form="ngForm">
+  <div class="form-grid">
+    <div class="form-group">
+      <label for="cliente">Nombre del Cliente</label>
+      <input id="cliente" name="cliente" [(ngModel)]="request.clienteNombre" placeholder="Ej: Ana Martínez" required>
+    </div>
+
+    <div class="form-group">
+      <label for="telefono">Teléfono</label>
+      <input id="telefono" name="telefono" [(ngModel)]="request.clienteTelefono" placeholder="Ej: 11 5555-1234" type="tel">
+    </div>
+
+    <div class="form-group">
+      <label for="empleado">Empleado</label>
+      <select id="empleado" name="empleado" [(ngModel)]="request.empleadoId" required>
+        <option [value]="0" disabled selected>Seleccionar</option>
+        @for (e of empleados; track e.id) {
+          <option [value]="e.id">{{ e.nombre }} — {{ e.especialidad }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="servicio">Servicio</label>
+      <select id="servicio" name="servicio" [(ngModel)]="request.servicioId" required>
+        <option [value]="0" disabled selected>Seleccionar</option>
+        @for (s of servicios; track s.id) {
+          <option [value]="s.id">{{ s.nombre }} ({{ s.duracionMinutos }} min)</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="fecha">Fecha y Hora de Inicio</label>
+      <input id="fecha" name="fecha" type="datetime-local" [(ngModel)]="request.fechaHoraInicio" required>
+    </div>
+  </div>
+
+  <div style="display:flex; gap:0.75rem; margin-top:1.5rem; padding-top:1.25rem; border-top:1px solid var(--border);">
+    <button type="submit">{{ editando ? 'Guardar Cambios' : 'Reservar Turno' }}</button>
+    <a routerLink="/turnos" style="text-decoration:none;">
+      <button type="button" class="btn-secondary">Volver a Agenda</button>
+    </a>
+  </div>
+</form>

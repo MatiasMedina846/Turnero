@@ -1,0 +1,57 @@
+<div class="page-header">
+  <h1>Agenda</h1>
+  <p>Turnos registrados en el sistema</p>
+</div>
+
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; padding:0 1rem 0.75rem; border-bottom:1px solid var(--border); margin: -0.5rem -1rem 0;">
+    <span style="font-weight:500; font-size:0.9rem;">Todos los turnos</span>
+    <a routerLink="/nuevo-turno" style="text-decoration:none;">
+      <button>+ Nuevo Turno</button>
+    </a>
+  </div>
+
+  @if (cargando) {
+    <div class="empty-state" style="padding:2rem;">Cargando turnos...</div>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Teléfono</th>
+          <th>Empleado</th>
+          <th>Servicio</th>
+          <th>Inicio</th>
+          <th>Fin</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (t of turnos; track t.id) {
+          <tr>
+            <td style="font-weight:500;">{{ t.clienteNombre }}</td>
+            <td>{{ t.clienteTelefono }}</td>
+            <td>{{ t.empleadoNombre }}</td>
+            <td>{{ t.servicioNombre }}</td>
+            <td>{{ t.fechaHoraInicio | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ t.fechaHoraFin | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td><span class="badge badge-success">{{ t.estado }}</span></td>
+            <td>
+              <div style="display:flex; gap:0.4rem;">
+                <a [routerLink]="['/editar-turno', t.id]" style="text-decoration:none;">
+                  <button style="padding:0.35rem 0.7rem; font-size:0.8rem;" class="btn-secondary">Editar</button>
+                </a>
+                <button style="padding:0.35rem 0.7rem; font-size:0.8rem; background:var(--danger);" (click)="eliminar(t.id)">Eliminar</button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="8" class="empty-state">No hay turnos registrados aún</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
