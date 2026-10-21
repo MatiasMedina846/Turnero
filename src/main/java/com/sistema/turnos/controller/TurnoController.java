@@ -3,6 +3,7 @@ package com.sistema.turnos.controller;
 import com.sistema.turnos.dto.TurnoRequestDTO;
 import com.sistema.turnos.dto.TurnoResponseDTO;
 import com.sistema.turnos.service.TurnoService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,12 +31,12 @@ public class TurnoController {
     }
 
     @PostMapping
-    public ResponseEntity<TurnoResponseDTO> crear(@RequestBody TurnoRequestDTO request) {
+    public ResponseEntity<TurnoResponseDTO> crear(@Valid @RequestBody TurnoRequestDTO request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(turnoService.crear(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TurnoResponseDTO> actualizar(@PathVariable Long id, @RequestBody TurnoRequestDTO request) {
+    public ResponseEntity<TurnoResponseDTO> actualizar(@PathVariable Long id, @Valid @RequestBody TurnoRequestDTO request) {
         return ResponseEntity.ok(turnoService.actualizar(id, request));
     }
 
