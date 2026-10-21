@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -14,7 +14,6 @@ import { Empleado, Servicio, TurnoRequest } from '../../models/models';
   templateUrl: './turno-form.html',
 })
 export class TurnoForm implements OnInit {
-
   empleados: Empleado[] = [];
   servicios: Servicio[] = [];
   editando = false;
@@ -31,27 +30,36 @@ export class TurnoForm implements OnInit {
   mensaje = '';
   error = '';
 
+  // Zoneless app: flag async state changes with markForCheck() so the view refreshes.
   constructor(
     private empleadoService: EmpleadoService,
     private servicioService: ServicioService,
     private turnoService: TurnoService,
     private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
-    this.empleadoService.listar().subscribe(data => this.empleados = data);
-    this.servicioService.listar().subscribe(data => this.servicios = data);
+    this.empleadoService.listar().subscribe((data) => {
+      this.empleados = data;
+      this.cdr.markForCheck();
+    });
+    this.servicioService.listar().subscribe((data) => {
+      this.servicios = data;
+      this.cdr.markForCheck();
+    });
 
     const id = this.route.snapshot.params['id'];
     if (id) {
       this.editando = true;
       this.turnoId = +id;
-      this.turnoService.obtener(this.turnoId).subscribe(t => {
+      this.turnoService.obtener(this.turnoId).subscribe((t) => {
         this.request.clienteNombre = t.clienteNombre;
         this.request.clienteTelefono = t.clienteTelefono;
         this.request.empleadoId = t.empleadoId;
         this.request.servicioId = t.servicioId;
         this.request.fechaHoraInicio = t.fechaHoraInicio.substring(0, 16);
+        this.cdr.markForCheck();
       });
     }
   }
@@ -60,7 +68,12 @@ export class TurnoForm implements OnInit {
     this.mensaje = '';
     this.error = '';
 
-    if (!this.request.clienteNombre || !this.request.empleadoId || !this.request.servicioId || !this.request.fechaHoraInicio) {
+    if (
+      !this.request.clienteNombre ||
+      !this.request.empleadoId ||
+      !this.request.servicioId ||
+      !this.request.fechaHoraInicio
+    ) {
       this.error = 'Completa todos los campos obligatorios.';
       return;
     }
@@ -71,11 +84,21 @@ export class TurnoForm implements OnInit {
 
     obs.subscribe({
       next: () => {
-        this.mensaje = this.editando ? 'Turno actualizado con éxito.' : 'Turno reservado con éxito.';
-        this.request = { clienteNombre: '', clienteTelefono: '', empleadoId: 0, servicioId: 0, fechaHoraInicio: '' };
+        this.mensaje = this.editando
+          ? 'Turno actualizado con éxito.'
+          : 'Turno reservado con éxito.';
+        this.request = {
+          clienteNombre: '',
+          clienteTelefono: '',
+          empleadoId: 0,
+          servicioId: 0,
+          fechaHoraInicio: '',
+        };
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.error = err.message;
+        this.cdr.markForCheck();
       },
     });
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ServicioService } from '../../services/servicio.service';
@@ -11,11 +11,14 @@ import { Servicio } from '../../models/models';
   templateUrl: './servicio-list.html',
 })
 export class ServicioList implements OnInit {
-
   servicios: Servicio[] = [];
   nuevo: Servicio = { nombre: '', duracionMinutos: 30 };
 
-  constructor(private service: ServicioService) {}
+  // Zoneless app: flag async state changes with markForCheck() so the view refreshes.
+  constructor(
+    private service: ServicioService,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit() {
     this.cargar();
@@ -23,7 +26,10 @@ export class ServicioList implements OnInit {
 
   cargar() {
     this.service.listar().subscribe({
-      next: data => this.servicios = data,
+      next: (data) => {
+        this.servicios = data;
+        this.cdr.markForCheck();
+      },
     });
   }
 
@@ -32,6 +38,7 @@ export class ServicioList implements OnInit {
     this.service.crear(this.nuevo).subscribe(() => {
       this.nuevo = { nombre: '', duracionMinutos: 30 };
       this.cargar();
+      this.cdr.markForCheck();
     });
   }
 }
