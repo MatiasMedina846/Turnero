@@ -34,6 +34,14 @@ exception/GlobalExceptionHandler  →  { "error": "..." } JSON responses
 
 Concurrency: `TurnoService.crear/actualizar` load the employee with `SELECT ... FOR UPDATE` (`EmpleadoRepository.findByIdForUpdate`) before checking overlaps, which serializes bookings of the same employee.
 
+## Live demo / Demo en vivo
+
+- Frontend: https://matiasmedina846.github.io/Turnero/
+- API health: https://turnero-api-viu8.onrender.com/actuator/health
+
+The backend runs on Render's free plan, so the first request after a period of inactivity can take about a minute while it wakes up.
+El backend corre en el plan gratuito de Render: la primera request tras un rato de inactividad puede tardar cerca de un minuto en despertar.
+
 ## Run it locally / Cómo correrlo
 
 Requirements: Java 21, Node 22+, Docker (for the database).
