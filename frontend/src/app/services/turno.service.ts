@@ -3,11 +3,11 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { TurnoRequest, TurnoResponse } from '../models/models';
+import { API_BASE } from '../api.config';
 
 @Injectable({ providedIn: 'root' })
 export class TurnoService {
-
-  private api = '/api/turnos';
+  private api = `${API_BASE}/api/turnos`;
 
   constructor(private http: HttpClient) {}
 
@@ -24,7 +24,7 @@ export class TurnoService {
       catchError((err: HttpErrorResponse) => {
         const msg = err.error?.error || 'Error al crear el turno';
         return throwError(() => new Error(msg));
-      })
+      }),
     );
   }
 
@@ -33,7 +33,7 @@ export class TurnoService {
       catchError((err: HttpErrorResponse) => {
         const msg = err.error?.error || 'Error al actualizar el turno';
         return throwError(() => new Error(msg));
-      })
+      }),
     );
   }
 

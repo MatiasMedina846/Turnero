@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Servicio } from '../models/models';
+import { API_BASE } from '../api.config';
 
 @Injectable({ providedIn: 'root' })
 export class ServicioService {
-
-  private api = '/api/servicios';
+  private api = `${API_BASE}/api/servicios`;
 
   constructor(private http: HttpClient) {}
 
