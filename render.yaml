@@ -1,0 +1,19 @@
+# Render Blueprint: deploys the Turnero backend from the Dockerfile.
+# Secrets (DB_*) are not stored here: set them in the Render dashboard.
+services:
+  - type: web
+    name: turnero-api
+    runtime: docker
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: DB_URL
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: CORS_ALLOWED_ORIGIN
+        sync: false
+      - key: DDL_AUTO
+        value: update
