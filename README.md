@@ -62,6 +62,24 @@ Configuration is read from environment variables (defaults match the Docker data
 
 To use a hosted database (Neon, Supabase...) export `DB_URL`, `DB_USER` and `DB_PASSWORD`. **Never commit credentials.**
 
+## Deploy (Render + Neon)
+
+The backend ships with a multi-stage `Dockerfile` and a `render.yaml` Blueprint.
+El backend incluye un `Dockerfile` multi-stage y un Blueprint `render.yaml`.
+
+1. Create a free PostgreSQL database on [Neon](https://neon.tech) and copy the connection details. / Creá una base PostgreSQL gratis en Neon.
+2. In [Render](https://render.com): **New > Blueprint**, pick this repo. / En Render: **New > Blueprint** y elegí este repo.
+3. Set the environment variables in the dashboard (never commit them) / Cargá las variables en el panel (nunca en el repo):
+
+| Variable | Example / Ejemplo |
+|---|---|
+| `DB_URL` | `jdbc:postgresql://<neon-host>/<db>?sslmode=require` |
+| `DB_USER` | Neon user / usuario de Neon |
+| `DB_PASSWORD` | Neon password / contraseña de Neon |
+| `CORS_ALLOWED_ORIGIN` | URL of the deployed frontend / URL del frontend desplegado |
+
+4. Health check: `GET /actuator/health`. The free plan sleeps after inactivity, so the first request can take ~30-60 s. / El plan gratis se duerme por inactividad: la primera request puede tardar ~30-60 s.
+
 ## Tests
 
 ```bash
