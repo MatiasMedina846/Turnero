@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TurnoService } from '../../services/turno.service';
@@ -11,11 +11,15 @@ import { TurnoResponse } from '../../models/models';
   templateUrl: './turno-list.html',
 })
 export class TurnoList implements OnInit {
-
   turnos: TurnoResponse[] = [];
   cargando = true;
 
-  constructor(private service: TurnoService) {}
+  // The app runs without zone.js (zoneless), so state changed inside async callbacks
+  // must be flagged with markForCheck() for the view to refresh.
+  constructor(
+    private service: TurnoService,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit() {
     this.cargar();
@@ -24,12 +28,14 @@ export class TurnoList implements OnInit {
   cargar() {
     this.cargando = true;
     this.service.listar().subscribe({
-      next: data => {
+      next: (data) => {
         this.turnos = data;
         this.cargando = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.cargando = false;
+        this.cdr.markForCheck();
       },
     });
   }
@@ -38,7 +44,8 @@ export class TurnoList implements OnInit {
     if (!confirm('¿Eliminar este turno?')) return;
     this.service.eliminar(id).subscribe({
       next: () => {
-        this.turnos = this.turnos.filter(t => t.id !== id);
+        this.turnos = this.turnos.filter((t) => t.id !== id);
+        this.cdr.markForCheck();
       },
     });
   }
